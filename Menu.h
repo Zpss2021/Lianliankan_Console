@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include <conio.h>
-#include "Game.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -16,6 +16,8 @@ class Menu {
 public:
 	unsigned _Space;
 	Menu(options Options);
+	void push_back(string);
+	void pop_back();
 	void show(bool ordered, bool resume, size_t chosen);
 	unsigned getSelect(size_t Min, size_t Max);
 	unsigned exec(bool ordered, size_t chosen, string Hint);
@@ -34,7 +36,6 @@ extern Menu loadMenu;
 extern Menu rankMenu;
 extern Menu helpMenu;
 extern Menu diffMenu;
-extern Menu pausMenu;
 extern options setOptions;
 extern options* setOpCps;
 

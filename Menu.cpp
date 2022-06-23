@@ -1,6 +1,12 @@
 #include "Menu.h"
 
 Menu::Menu(options Options) :_Options(Options), _Space(4), _Length(0) {}
+void Menu::push_back(string str) {
+	this->_Options.push_back(str);
+}
+void Menu::pop_back() {
+	this->_Options.pop_back();
+}
 void Menu::show(bool ordered, bool resume, size_t chosen) {
 	options opts = _Options;
 	size_t i, j;

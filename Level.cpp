@@ -14,7 +14,13 @@ const char* diffToStr(unsigned diff) {
 }
 
 Level::Level(unsigned Level)
-	: level(Level) {
+	: level(Level), unlimited(false) {
+	set = getSets();
+	map = new Map(Level);
+}
+
+Level::Level(unsigned Level, bool Unlimited)
+	: level(Level), unlimited(Unlimited) {
 	set = getSets();
 	map = new Map(Level);
 }
@@ -53,20 +59,96 @@ string Level::setTitle() {
 }
 
 void Level::newGame() {
-	setWindowSize();
-	thread tTimer(&Map::timer, map, setTitle());
-	thread tGame(&Map::getCursor, map);
-	console.clear();
-	map->init(set.difficulty);
-	map->sort();
-	map->print(COORD{0, 0});
-	tGame.join();
-	tTimer.join();
-	if (map->over) {
-		// the time is over
-		return;
+	if (unlimited) {
+		setWindowSize();
+		setTitle();
+		console.clear();
+		map->init(set.difficulty);
+		map->sort();
+		map->print(COORD{ 0, 0 });
+		map->getCursor();
 	}
-	if (map->done) {
-		//done round in time 
+	else {
+		setWindowSize();
+		thread tTimer(&Map::timer, map, setTitle());
+		if (unlimited) setTitle();
+		thread tGame(&Map::getCursor, map);
+		console.clear();
+		map->init(set.difficulty);
+		map->sort();
+		map->print(COORD{ 0, 0 });
+		tGame.detach();
+		if (!unlimited)
+			tTimer.join();
+	}
+	
+	if (map->second <= 0) {
+		options end;
+		menu = new Menu(end);
+		menu->push_back("**游戏结束！**");
+		menu->show(false, true, 0);
+		Sleep(750);
+		string tmp = "通过关卡: ";
+		tmp += to_string(level - 1);
+		menu->push_back(tmp);
+		menu->show(false, true, 0);
+		Sleep(500);
+		tmp = "重排次数: ";
+		tmp += to_string(this->map->resort);
+		menu->push_back(tmp);
+		menu->show(false, true, 0);
+		Sleep(500);
+		tmp = "总分: ";
+		tmp += to_string(int(score + (int(level) * 2 + 2) * (int(level) * 2 + 2) + map->emptyed - 10 * int(map->resort)));
+		menu->push_back(tmp);
+		menu->exec(false, "按【Enter】键返回主菜单");
+		delete menu;
+		score = 0;
+		main();
+	}
+	if (map->done)
+		score += getScore();
+	if (unlimited && map->second <= 0) {
+		options end;
+		menu = new Menu(end);
+		menu->push_back("**游戏结束！**");
+		menu->show(false, true, 0);
+		Sleep(750);
+		string tmp = "通过关卡: ";
+		tmp += to_string(level - 1);
+		menu->push_back(tmp);
+		menu->show(false, true, 0);
+		Sleep(500);
+		tmp = "重排次数: ";
+		tmp += to_string(this->map->resort);
+		menu->push_back(tmp);
+		menu->exec(false, "按【Enter】键返回主菜单");
+		delete menu;
+		score = 0;
+		main();
+	}
+	else if (level == 4) {
+		options end;
+		menu = new Menu(end);
+		menu->push_back("**游戏结束！**");
+		menu->show(false, true, 0);
+		Sleep(750);
+		string tmp = "通过关卡: ";
+		tmp += to_string(level);
+		menu->push_back(tmp);
+		menu->show(false, true, 0);
+		Sleep(500);
+		tmp = "重排次数: ";
+		tmp += to_string(this->map->resort);
+		menu->push_back(tmp);
+		menu->show(false, true, 0);
+		Sleep(500);
+		tmp = "总分: ";
+		tmp += to_string(score);
+		menu->push_back(tmp);
+		menu->exec(false, "按【Enter】键返回主菜单");
+		delete menu;
+		score = 0;
+		main();
 	}
 }

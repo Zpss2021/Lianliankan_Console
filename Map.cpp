@@ -1,9 +1,10 @@
-#include "Game.h"
+#include "Map.h"
 
 Map::Map(unsigned Level)
-	:second(30 * Level), done(false), over(false), resort(0) {
+	:second(30 * Level), done(false), resort(0) {
 	size_t Size = size_t(Level) * 2 + 2;
 	map.resize(Size);
+	emptyed = -1 * int(Size) * int(Size);
 	for (size_t i = 0; i < Size; i++)
 		map[i].resize(Size);
 }
@@ -65,34 +66,34 @@ const char* Map::toMark(int num) {
 const char* Map::toMark(int num, bool selected) {
 	colors bgColor = selected ? stress : black;
 	switch (num) {
-	case -1:	
+	case -1:
 		console.color(bgColor, white);
 		break;
-	case 0:	
+	case 0:
 		console.color(bgColor, red);
 		break;
 	case 1:
 		console.color(bgColor, red);
 		break;
-	case 2:	
+	case 2:
 		console.color(bgColor, green);
 		break;
-	case 3:	
+	case 3:
 		console.color(bgColor, green);
 		break;
-	case 4:	
+	case 4:
 		console.color(bgColor, white);
 		break;
-	case 5:	
+	case 5:
 		console.color(bgColor, white);
 		break;
-	case 6:	
+	case 6:
 		console.color(bgColor, red | green);
 		break;
-	case 7:	
+	case 7:
 		console.color(bgColor, blue);
 		break;
-	case 8:	
+	case 8:
 		console.color(bgColor, blue | green);
 		break;
 	case 9:
@@ -137,7 +138,7 @@ void Map::print(COORD c) {
 	bool selected;
 	console.clear();
 	cout << endl;
-	for (size_t i = 0; i < sz;i++) {
+	for (size_t i = 0; i < sz; i++) {
 		cout << "    ";
 		for (size_t j = 0; j < sz; j++) {
 			selected = false;
@@ -154,11 +155,11 @@ void Map::print(COORD c) {
 void Map::getCursor() {
 	COORD chosed{ 0, 0 };
 	while (!done) {
-P:		if (over)
+P:		if (second <= 0)
 			break;
 		else {
-		print(chosed);
-		switch (_getch()) {
+			print(chosed);
+			switch (_getch()) {
 		case 'w':case 'W':case 72:
 			if (chosed.Y - 1 >= 0)
 				chosed.Y--;
@@ -191,52 +192,39 @@ P:		if (over)
 			console.clear();
 			cout << "按Esc退出" << endl;
 			cout << "其他键继续..." << endl;
-			switch(_getch()) {
+			switch (_getch()) {
 			case 27:
 				console.clear();
-				exit(0);
+				second = 0;
+				return;
 			default:
 				break;
 			}
 			break;
-		case 'b':case'B':	////need save and read
-			switch (pausMenu.exec(true, 2)) {
-			case 1:
-				//off the audio, need more...
-				break;
-			case 2:
-				break;
-			case 3:
-				//save the game, need more...
-			case 4:default:
-				//need to add function...
-				console.clear().pause();
-				exit(0);
-			}
 		case 'r':case'R':
 			sort();
 			resort++;
 			break;
 		default:
 			break;
-	}
-	if (coords.size() == 2)	//need to add music...
-		if (Judge(map, coords[0], coords[1]))
-			setEmpty();
-		else
-			coords.clear();
-	for (size_t i = 0; i < map.size(); i++)
-		for (size_t j = 0; j < map[i].size(); j++)
-			if (!isEmpty(map[i][j]))
-				goto P;
-			done = true;
 		}
+		if (coords.size() == 2)	//need to add music...
+			if (Judge(map, coords[0], coords[1]))
+				setEmpty();
+			else
+				coords.clear();
+		if (emptyed < 0)
+			goto P;
+		done = true;
+	}
 	}
 }
 
 void Map::setEmpty() {
-	for (vector<COORD>::iterator it = coords.begin(); it != coords.end(); ++it)
+	for (vector<COORD>::iterator it = coords.begin(); it != coords.end(); ++it) {
 		map[it->Y][it->X] = -1;
+		emptyed++;
+	}
 	coords.clear();
 }
 
@@ -267,7 +255,7 @@ void Map::timer(string cTitle) {
 		swprintf(wt, title.size(), L"%S", title.c_str());
 		console.title(wt);
 		delete[] wt;
-		if (done)
+		if (second <= 0 || done)
 			return;
 		wait(1);
 		i++;
@@ -276,11 +264,10 @@ void Map::timer(string cTitle) {
 			swprintf(wt, cTitle.size(), L"%S", cTitle.c_str());
 			console.title(wt);
 			delete[] wt;
-			if (done)
+			if (second <= 0 || done)
 				return;
 			wait(2);
 		}
 	}
-	over = true;
 	return;
 }

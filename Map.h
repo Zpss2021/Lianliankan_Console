@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _GAME_H
-#define _GAME_H
+#ifndef _MAP_H
+#define _MAP_H
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
@@ -33,7 +33,7 @@ private:
 	size_t resort;
 protected:
 	bool done;
-	bool over;
+	int emptyed;
 	vector<vector<int>> map;
 	vector<COORD> coords;
 };
@@ -42,9 +42,10 @@ inline void wait(unsigned sec) {
 	clock_t end = clock() + CLK_TCK * sec;
 	while (clock() < end);
 }
+
 inline bool isEmpty(int n) {
 	return n == -1 ? true : false;
 }
 
 
-#endif	/*_GAME_H*/
+#endif	/*_MAP_H*/

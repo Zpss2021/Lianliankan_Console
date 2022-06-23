@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="Map.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Menu.cpp">
@@ -35,7 +35,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="Map.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">

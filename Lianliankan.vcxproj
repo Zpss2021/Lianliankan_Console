@@ -130,7 +130,7 @@
     <ClCompile Include="Judge.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuOptions.cpp" />
   </ItemGroup>
@@ -138,7 +138,7 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="Judge.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Menu.h" />
   </ItemGroup>
   <ItemGroup>

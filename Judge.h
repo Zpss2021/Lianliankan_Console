@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstring>
 #include <vector>
-#include "Game.h"
+#include "Map.h"
 
 using std::vector;
 

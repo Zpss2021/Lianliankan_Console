@@ -28,8 +28,7 @@ options helps = {
 	"【按键】",
 	"按R重排，按Esc退出",
 	"【高分技巧】",
-	"用时越少，分数越高",
-	"               ——by Zpss"
+	"用时越少，分数越高"
 };
 
 options setOptions = {
@@ -46,16 +45,8 @@ options diffs = {
 	"困难：12种图案"
 };
 
-options pauses = {
-	"音效：",
-	"继续游戏",
-	"存档",
-	"不保存并退出"
-};
-
 Menu mainMenu(menus);
 //Menu loadMenu(loads);
 //Menu rankMenu(ranks);
 Menu helpMenu(helps);
 Menu diffMenu(diffs);
-Menu pausMenu(pauses);
