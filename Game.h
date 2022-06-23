@@ -1,14 +1,17 @@
 #pragma once
 
-#ifndef _MAP_H
-#define _MAP_H
+#ifndef _GAME_H
+#define _GAME_H
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
 #include <cstdlib>
 #include <vector>
 #include <conio.h>
+#include <string>
 #include "Console.h"
 #include "Judge.h"
+#include "Menu.h"
 
 using namespace std;
 
@@ -23,13 +26,25 @@ public:
 	void print(COORD);
 	void getCursor();
 	void setEmpty();
-//	unsigned getElementsByCoord(COORD);
-//	unsigned getElementsByCoord(unsigned, unsigned);
+	void timer(string);
+	friend class Level;
 private:
+	time_t second;
+	size_t resort;
+protected:
+	bool done;
+	bool over;
 	vector<vector<int>> map;
 	vector<COORD> coords;
 };
 
-bool isEmpty(int);
+inline void wait(unsigned sec) {
+	clock_t end = clock() + CLK_TCK * sec;
+	while (clock() < end);
+}
+inline bool isEmpty(int n) {
+	return n == -1 ? true : false;
+}
 
-#endif	/*_MAP_H*/
+
+#endif	/*_GAME_H*/

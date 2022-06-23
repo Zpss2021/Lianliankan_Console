@@ -1,22 +1,15 @@
 #include "Menu.h"
 
 options menus = {
-	"开始游戏",
-	"载入游戏",
+	"冒险模式",
+	"无尽模式",
 	"排行榜",
 	"帮助",
 	"游戏设置",
 	"退出游戏"
 };
 
-options loads;
-//专门定义一个处理此内容的函数
-//	1."存档1名字",
-//	2."存档2名字",
-//	3."存档3名字",
-//    。。。
-//	4."返回主菜单"
-//};
+//options loads;
 
 options ranks;
 //	专门定义一个处理此内容的函数
@@ -33,7 +26,7 @@ options helps = {
 	"WASD键控制光标，空格键选择，",
 	"配对成功则选中的两图案消失",
 	"【按键】",
-	"按R重排，按P暂停，Esc退出",
+	"按R重排，按Esc退出",
 	"【高分技巧】",
 	"用时越少，分数越高",
 	"               ——by Zpss"
@@ -41,7 +34,7 @@ options helps = {
 
 options setOptions = {
 	"游戏难度：",
-	//	"作弊模式",
+	//	"游戏音效",
 	"返回主菜单"
 };
 
@@ -53,8 +46,16 @@ options diffs = {
 	"困难：12种图案"
 };
 
+options pauses = {
+	"音效：",
+	"继续游戏",
+	"存档",
+	"不保存并退出"
+};
+
 Menu mainMenu(menus);
 //Menu loadMenu(loads);
 //Menu rankMenu(ranks);
 Menu helpMenu(helps);
 Menu diffMenu(diffs);
+Menu pausMenu(pauses);

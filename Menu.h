@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include <conio.h>
-#include "Map.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -34,6 +34,7 @@ extern Menu loadMenu;
 extern Menu rankMenu;
 extern Menu helpMenu;
 extern Menu diffMenu;
+extern Menu pausMenu;
 extern options setOptions;
 extern options* setOpCps;
 

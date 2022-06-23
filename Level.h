@@ -4,11 +4,13 @@
 
 #include <fstream>
 #include <string>
-#include "Map.h"
+#include <thread>
+#include "Game.h"
 
 using namespace std;
 
 static const char* setFile = "./settings.dat";
+static const char* gameFile = "./savedgame.dat";
 
 struct Settings {
 	unsigned difficulty;
@@ -24,8 +26,12 @@ public:
 	static Settings getSets();
 	static void changeSets(Settings&);
 	void setWindowSize();
-	void setTitle();
+	string setTitle();
 	void newGame();
+	friend class File;
+	inline int getScore() {
+		return int(map->second) + (level + 2) * (level + 2) * 4 - 10 * int(map->resort);
+	}
 private:
 	Map* map;
 	Settings set;

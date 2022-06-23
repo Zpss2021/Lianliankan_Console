@@ -1,11 +1,11 @@
 #pragma once
-#ifndef _GAME_H
-#define _GAME_H
+#ifndef _JUDGE_H
+#define _JUDGE_H
 
-#include<cmath>
-#include<cstring>
+#include <cmath>
+#include <cstring>
 #include <vector>
-#include "Map.h"
+#include "Game.h"
 
 using std::vector;
 
@@ -23,4 +23,4 @@ static int** arr;
 
 bool Judge(vector<vector<int>>&, COORD, COORD);
 
-#endif /*_GAME_H*/
+#endif /*_JUDGE_H*/

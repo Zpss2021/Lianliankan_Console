@@ -1,6 +1,7 @@
-#include "Map.h"
+#include "Game.h"
 
-Map::Map(unsigned Level) {
+Map::Map(unsigned Level)
+	:second(30 * Level), done(false), over(false), resort(0) {
 	size_t Size = size_t(Level) * 2 + 2;
 	map.resize(Size);
 	for (size_t i = 0; i < Size; i++)
@@ -20,10 +21,12 @@ void Map::init(unsigned Diff) {
 }
 
 void Map::sort() {
+	size_t sz = map.size();
 	srand((unsigned)time(NULL));
-	for (int i = 0; i < map.size() * map.size(); i++)
-		swap(map[rand() % map.size()][rand() % map.size()],
-			map[rand() % map.size()][rand() % map.size()]);
+	for (int i = 0; i < sz * sz; i++)
+		swap(map[rand() % sz][rand() % sz],
+			map[rand() % sz][rand() % sz]);
+	console.clear();
 }
 
 const char* Map::toMark(int num) {
@@ -109,49 +112,52 @@ const char* Map::toMark(int num, bool selected) {
 }
 
 void Map::print() {
+	size_t sz = map.size(), tsz = coords.size();
 	bool selected;
 	console.clear();
-	cout.put('\n');
-	for (size_t i = 0, k = 0; i < map.size(); i++) {
+	cout << endl;
+	for (size_t i = 0; i < sz; i++) {
 		cout << "    ";
-		for (size_t j = 0; j < map.size(); j++) {
+		for (size_t j = 0; j < sz; j++) {
 			selected = false;
-			for (size_t k = 0; k < coords.size(); k++)
+			for (size_t k = 0; k < tsz; k++)
 				if (coords[k].Y == i && coords[k].X == j)
 					selected = true;
 			cout << toMark(map[i][j], selected);
-			console.color(black, white);
 		}
-		cout.put('\n');
+		console.color(black, white);
+		cout << endl;
 	}
 }
 
 void Map::print(COORD c) {
 	vector<COORD> temp(coords);
 	temp.push_back(c);
+	size_t sz = map.size(), tsz = temp.size();
 	bool selected;
 	console.clear();
-	cout.put('\n');
-	for (size_t i = 0, k = 0; i < map.size(); i++) {
+	cout << endl;
+	for (size_t i = 0; i < sz;i++) {
 		cout << "    ";
-		for (size_t j = 0; j < map.size(); j++) {
+		for (size_t j = 0; j < sz; j++) {
 			selected = false;
-			for (size_t k = 0; k < temp.size(); k++)
+			for (size_t k = 0; k < tsz; k++)
 				if (temp[k].Y == i && temp[k].X == j)
 					selected = true;
 			cout << toMark(map[i][j], selected);
-			console.color(black, white);
 		}
-		cout.put('\n');
+		console.color(black, white);
+		cout << endl;
 	}
-//	cout << '[' << temp[temp.size() - 1].X << "," << temp[temp.size() - 1].Y << ']' << endl;
 }
 
 void Map::getCursor() {
 	COORD chosed{ 0, 0 };
-	bool done = false;
 	while (!done) {
-P:		print(chosed);
+P:		if (over)
+			break;
+		else {
+		print(chosed);
 		switch (_getch()) {
 		case 'w':case 'W':case 72:
 			if (chosed.Y - 1 >= 0)
@@ -182,24 +188,49 @@ P:		print(chosed);
 			break;
 		case 27:
 			//need to add function...
-			console.clear().pause();
-			exit(0);
+			console.clear();
+			cout << "按Esc退出" << endl;
+			cout << "其他键继续..." << endl;
+			switch(_getch()) {
+			case 27:
+				console.clear();
+				exit(0);
+			default:
+				break;
+			}
+			break;
+		case 'b':case'B':	////need save and read
+			switch (pausMenu.exec(true, 2)) {
+			case 1:
+				//off the audio, need more...
+				break;
+			case 2:
+				break;
+			case 3:
+				//save the game, need more...
+			case 4:default:
+				//need to add function...
+				console.clear().pause();
+				exit(0);
+			}
 		case 'r':case'R':
 			sort();
+			resort++;
 			break;
 		default:
 			break;
+	}
+	if (coords.size() == 2)	//need to add music...
+		if (Judge(map, coords[0], coords[1]))
+			setEmpty();
+		else
+			coords.clear();
+	for (size_t i = 0; i < map.size(); i++)
+		for (size_t j = 0; j < map[i].size(); j++)
+			if (!isEmpty(map[i][j]))
+				goto P;
+			done = true;
 		}
-		if (coords.size() == 2)	//need to add music...
-			if (Judge(map, coords[0], coords[1]))
-				setEmpty();
-			else
-				coords.clear();
-		for (size_t i = 0; i < map.size(); i++)
-			for (size_t j = 0; j < map[i].size(); j++)
-				if (!isEmpty(map[i][j]))
-					goto P;
-		done = true;
 	}
 }
 
@@ -208,18 +239,48 @@ void Map::setEmpty() {
 		map[it->Y][it->X] = -1;
 	coords.clear();
 }
-//unsigned Map::getElementsByCoord
-//	(unsigned x, unsigned y) {
-//	return map[x][y];
-//}
-//
-//unsigned Map::getElementsByCoord (COORD n) {
-//	return map[n.X][n.Y];
-//}
 
-bool isEmpty(int n)
-{
-	if (n == -1)
-		return true;
-	return false;
+void Map::timer(string cTitle) {
+	time_t t, m, s, d, i = 0;
+	tm* target;
+	string title;
+	wchar_t* wt;
+	time(&t);
+	target = localtime(&t);
+	target->tm_min += int(second) / 60;
+	target->tm_sec += int(second) % 60;
+	t = mktime(target);
+	d = time_t(difftime(t, time(NULL)));
+	while (d > 0 && !done) {
+		second = d = time_t(difftime(t, time(NULL)));
+		m = d / 60;
+		s = d % 60;
+		title = "剩余时间: ";
+		if (m < 10)
+			title += "0";
+		title += to_string(m);
+		title += ":";
+		if (s < 10)
+			title += "0";
+		title += to_string(s);
+		wt = new wchar_t[title.size()];
+		swprintf(wt, title.size(), L"%S", title.c_str());
+		console.title(wt);
+		delete[] wt;
+		if (done)
+			return;
+		wait(1);
+		i++;
+		if (d > 10 && i % 4 == 0) {
+			wt = new wchar_t[cTitle.size()];
+			swprintf(wt, cTitle.size(), L"%S", cTitle.c_str());
+			console.title(wt);
+			delete[] wt;
+			if (done)
+				return;
+			wait(2);
+		}
+	}
+	over = true;
+	return;
 }

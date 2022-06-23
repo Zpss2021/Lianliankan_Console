@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include "Map.h"
 #include "Menu.h"
+#include "Game.h"
 #include "Level.h"
 #include "Console.h"
 
@@ -13,8 +13,11 @@ int main(void) {
 		console.title(L"《连连看》控制台版");
 		switch (mainMenu.exec(true, 1, "【WASD或方向键移动】")) {
 		case 1:
+			helpMenu.exec(false, "按【Enter】键开始游戏");
 			for (int lev = 1; lev < 5; lev++) {
-				(level = new Level(lev))->newGame();
+				console.clear();
+				level = new Level(lev);
+				level->newGame();
 				delete level;
 			}
 			break;

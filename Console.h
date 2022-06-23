@@ -3,6 +3,7 @@
 #define _CONSOLE_H
 
 #include <Windows.h>
+#include <locale.h>
 
 enum colors { black, blue, green, red = 4, white = 7, stress };
 
@@ -32,11 +33,13 @@ public:
 	COORD buffer() {					// 返回控制台缓冲区大小
 		return info().dwSize;
 	}
-	const wchar_t* title() {			// 返回控制台窗口标题
-		wchar_t cTitle[255];
+	wchar_t* title() {			// 返回控制台窗口标题
+		wchar_t* cTitle = new wchar_t [255];
 		GetConsoleTitle(cTitle, 255);
 		return cTitle;
 	}
+
+#ifdef _INC_LOCALE
 	char* locale() {					// 返回控制台程序地区信息
 		return setlocale(LC_ALL, "");
 	}
@@ -44,6 +47,8 @@ public:
 		setlocale(LC_ALL, Locale);
 		return *this;
 	}
+#endif /*_INC_LOCALE*/
+
 	Console& title(const wchar_t* Title) {	// 设定控制台窗口标题
 		SetConsoleTitle(Title);
 		return *this;

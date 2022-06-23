@@ -39,24 +39,34 @@ void Level::setWindowSize() {
 	console.size(short(12 + level * 4), short(2 * level + 4));
 }
 
-void Level::setTitle() {
+string Level::setTitle() {
 	string title = diffToStr(set.difficulty);
 	title += "ตฺ ";
 	title += to_string(level);
 	title += " นุ";
+
 	wchar_t* wt = new wchar_t[title.size()];
 	swprintf(wt, title.size(), L"%S", title.c_str());
+
 	console.title(wt);
+	return title;
 }
 
 void Level::newGame() {
-	setTitle();
 	setWindowSize();
+	thread tTimer(&Map::timer, map, setTitle());
+	thread tGame(&Map::getCursor, map);
 	console.clear();
 	map->init(set.difficulty);
 	map->sort();
-	map->print();
-	map->getCursor();
-
-	console.pause();
+	map->print(COORD{0, 0});
+	tGame.join();
+	tTimer.join();
+	if (map->over) {
+		// the time is over
+		return;
+	}
+	if (map->done) {
+		//done round in time 
+	}
 }
